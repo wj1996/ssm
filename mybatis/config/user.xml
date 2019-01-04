@@ -3,4 +3,53 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="user">
+	<select id="getUserById" parameterType="int" resultType="com.wj.mybatis.pojo.User">
+		select id,username,birthday,sex,address from user where id = #{id}
+	</select>
+	<select id="getUserByUserName" parameterType="string" resultType="com.wj.mybatis.pojo.User">
+		select id,username,birthday,sex,address from user where username like '%${value}%'
+	</select>
+	
+	<!-- useGeneratedKeys:标识插入使用自增id
+		 keyProperty:与useGeneratedKeys配套使用，用于绑定主键接收的pojo属性
+	 -->
+	<insert id="insertUser" parameterType="com.wj.mybatis.pojo.User" useGeneratedKeys="true" keyProperty="id">
+		<!-- selectKey 主键返回
+			keyProperty:user中的主键属性
+			resultType:主键数据类型
+			order:指定selectKey何时执行，AFTER之后
+		 -->
+		<!-- <selectKey keyProperty="id" resultType="int" order="AFTER">
+			select last_insert_id()
+		</selectKey> -->
+		insert into user(username,birthday,sex,address) values(#{username},#{birthday},#{sex},#{address});
+	</insert>
+	
+	<!-- 
+	 	新增uuid2属性
+	  -->
+	<insert id="insertUserUUID" parameterType="com.wj.mybatis.pojo.User" useGeneratedKeys="true" keyProperty="id">
+		<!-- selectKey 主键返回
+			keyProperty:user中的主键属性
+			resultType:主键数据类型
+			order:指定selectKey何时执行，AFTER之后
+		 -->
+		<!-- <selectKey keyProperty="id" resultType="int" order="AFTER">
+			select last_insert_id()
+		</selectKey> -->
+		<selectKey keyProperty="uuid2" resultType="string" order="BEFORE">
+			select uuid()
+		</selectKey>
+		insert into user(username,birthday,sex,address,uuid2) values(#{username},#{birthday},#{sex},#{address},#{uuid2});
+	</insert>
+	
+	<update id="updateUser" parameterType="com.wj.mybatis.pojo.User">
+		update user set username = #{username} where id = #{id}
+	</update>
+	
+	
+	<delete id="deleteUser" parameterType="int">
+		delete from user where id = #{id};
+	</delete>
+	
 </mapper>
